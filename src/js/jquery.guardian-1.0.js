@@ -469,15 +469,14 @@ if(!window.console) { var console = { log: function() { } } };
 			val = el.val(),
 			pattern = el.data('pattern');
 			this.$inputs[name] = true;
-			
-			
+
 			if(el.attr('required') || val.length) {
 				if(typeof pattern != 'undefined') {				
 					if(!this.$patterns[pattern].test(val)) {
 						this.$inputs[name] = false;
 					}
 				} else {
-					if(!this.$patterns['alnum'].test(val)) {
+					if(!val.trim().length) {
 						this.$inputs[name] = false;
 					}
 				}
@@ -594,7 +593,22 @@ if(!window.console) { var console = { log: function() { } } };
 			var tag = el[0].tagName,
 			type = el[0].type,
 			name = el.attr('name'),
-			pattern = el.data('pattern');
+			pattern = el.data('pattern'),
+            minLen = parseInt(el.attr('minlength')),
+            maxLen = parseInt(el.attr('maxlength')),
+            value = el.val();
+
+            if (!isNaN(minLen) && minLen > 0 && value.length < minLen) {
+                this.$inputs[name] = false;
+                this.validationHandler(el);
+                return false;
+            }
+
+            if (!isNaN(maxLen) && maxLen > 0 && value.length > maxLen) {
+                this.$inputs[name] = false;
+                this.validationHandler(el);
+                return false;
+            }
 			
 			/* getting input type */
 			switch(tag) { 
